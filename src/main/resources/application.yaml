@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: rizla
+jwt:
+  secret: Whatever
+  expiration: 3600
