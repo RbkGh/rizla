@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8799:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5758/rizladb
+      SPRING_DATASOURCE_USERNAME: rizla_user
+      SPRING_DATASOURCE_PASSWORD: rizla_pass
+    volumes:
+      - ./:/app
+      - ~/.m2:/root/.m2
+
+  db:
+    image: postgres:13
+    ports:
+      - "5758:5432"
+    environment:
+      POSTGRES_DB: rizla_db
+      POSTGRES_USER: rizla_user
+      POSTGRES_PASSWORD: rizla_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
