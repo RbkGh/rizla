@@ -39,5 +39,5 @@ docker-compose down -v
 ```shell
 docker-compose -f docker-compose.dev.yml up --build
 ```
-> dev url for app will be live at http://localhost:8799/ and postgres db at port 5758
+> dev url for app will be live at http://localhost:4444/ and postgres db at port 9999
 

@@ -2,15 +2,15 @@ spring:
   application:
     name: rizla
   datasource:
-    url: jdbc:postgresql://db:5432/rizladb
+    url: jdbc:postgresql://db:9999/rizladb
     username: rizla_user
     password: rizla_pass
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 jwt:
-  secret: Whatever
+  secret: testSecretMUSTGO89*23~testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89
   expiration: 3600

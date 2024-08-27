@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: rizla
+#  datasource:
+#    url: jdbc:postgresql://db:9999/rizladb
+#    username: rizla_user
+#    password: rizla_pass
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+jwt:
+  secret: Whatever
+  expiration: 3600

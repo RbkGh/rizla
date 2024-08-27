@@ -16,7 +16,7 @@ public class JWTTokenUtilTest {
 
     @BeforeEach
     void setUp() {
-        jwtTokenUtil = new JWTTokenUtil();
+        jwtTokenUtil = new JWTTokenUtil("testSecretMUSTGO89*23~testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89",Long.valueOf("3600"));
         ReflectionTestUtils.setField(jwtTokenUtil, "secret", "testSecretMUSTGO89*23~testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89");
         ReflectionTestUtils.setField(jwtTokenUtil, "expiration", Long.valueOf("3600"));
     }

@@ -1,4 +1,4 @@
-package com.transportbooker.rizla.dto;
+package com.transportbooker.rizla.dto.request;
 
 import lombok.Data;
 

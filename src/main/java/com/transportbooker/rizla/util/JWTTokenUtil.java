@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,14 +19,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class JWTTokenUtil implements Serializable {
 
     @Value("${jwt.secret}")
-    private String secret;
+    String secret;
 
     @Value("${jwt.expiration:3600}")
-    private Long expiration;
+    Long expiration;
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = secret.getBytes();

@@ -6,11 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "8799:8080"
+      - "4444:8080"
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5758/rizladb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rizladb
       SPRING_DATASOURCE_USERNAME: rizla_user
       SPRING_DATASOURCE_PASSWORD: rizla_pass
     volumes:
@@ -20,9 +20,9 @@ services:
   db:
     image: postgres:13
     ports:
-      - "5758:5432"
+      - "9999:5432"
     environment:
-      POSTGRES_DB: rizla_db
+      POSTGRES_DB: rizladb
       POSTGRES_USER: rizla_user
       POSTGRES_PASSWORD: rizla_pass
     volumes:

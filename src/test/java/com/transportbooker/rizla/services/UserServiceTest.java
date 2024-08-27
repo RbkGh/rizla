@@ -1,6 +1,6 @@
 package com.transportbooker.rizla.services;
 
-import com.transportbooker.rizla.entity.CustomUser;
+import com.transportbooker.rizla.models.CustomUser;
 import com.transportbooker.rizla.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +30,9 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    @InjectMocks
+    private AuthService authService;
+
     @Test
     void loadUserByUsername_userExists_returnsUserDetails() {
 
@@ -40,7 +43,7 @@ public class UserServiceTest {
 
         Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
 
-        UserDetails userDetails = userService.loadUserByUsername("testuser");
+        UserDetails userDetails = authService.loadUserByUsername("testuser");
 
         assertNotNull(userDetails);
         assertEquals("testuser", userDetails.getUsername());
@@ -51,7 +54,7 @@ public class UserServiceTest {
     @Test
     void loadUserByUsername_userNotFound_throwsException() {
         Mockito.when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
-        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("nonexistent"));
+        assertThrows(UsernameNotFoundException.class, () -> authService.loadUserByUsername("nonexistent"));
     }
 
     @Test
