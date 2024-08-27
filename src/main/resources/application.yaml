@@ -22,6 +22,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  mvc:
+    log-request-details: true
 jwt:
   secret: testSecretMUSTGO89*23~testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89
   expiration: 3600
+logging:
+  level:
+    web: debug
+    sql: debug

@@ -2,15 +2,18 @@ package com.transportbooker.rizla.config;
 
 import com.transportbooker.rizla.filter.JWTRequestFilter;
 import com.transportbooker.rizla.repository.UserRepository;
+import jakarta.servlet.Filter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfiguration {
 
@@ -33,7 +36,6 @@ public class SecurityConfiguration {
     private final JWTAuthEntryPoint jwtAuthenticationEntryPoint;
 
     private final JWTRequestFilter jwtRequestFilter;
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,23 +59,36 @@ public class SecurityConfiguration {
 //                .antMatchers("/api/public/**").permitAll()  // Public API endpoints
 //                .antMatchers("/api/secure/**").authenticated()  // Secured API endpoints
 //                .anyRequest().authenticated();
+
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+//                        .requestMatchers("/api/public/users/register").permitAll() // Public login endpoint
+//                        .requestMatchers("/api/public/**").permitAll()  // Public API endpoints
+//                        .requestMatchers("/api/secure/**").authenticated() // Secured API endpoints
+//                        .anyRequest().permitAll())
+//                .exceptionHandling(exceptions -> exceptions
+//                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                )
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/api/public/auth/login").permitAll() // Public login endpoint
-                        .requestMatchers("/api/public/**").permitAll()  // Public API endpoints
-                        .requestMatchers("/api/secure/**").authenticated() // Secured API endpoints
-                        .anyRequest().permitAll())
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/public/auth/login", "/api/public/users/register").permitAll()
+                        .anyRequest().authenticated()
+                ).exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

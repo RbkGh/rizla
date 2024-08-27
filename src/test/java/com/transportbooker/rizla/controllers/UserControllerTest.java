@@ -58,8 +58,8 @@ class UserControllerTest {
     }
 
     @Test
-    public void registerUser_Expect_204_Created() throws Exception {
-        UserRequestDTO userRequestDTO = createPassengerUser();
+    public void registerUser_Expect_201_Created() throws Exception {
+        UserRequestDTO userRequestDTO = createPassengerUser("PASSENGER");
 
         this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -68,11 +68,12 @@ class UserControllerTest {
 
     }
 
-    private UserRequestDTO createPassengerUser() {
+    private UserRequestDTO createPassengerUser(String userType) {
         return UserRequestDTO.builder()
                 .username("rizla_user@gmail.com")
                 .password("rizla_pass")
                 .name("Rodney")
+                .userType(userType)
                 .build();
     }
 

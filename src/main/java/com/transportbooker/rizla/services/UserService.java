@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserService{
 
-    //private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-   // private JWTTokenUtil jwtTokenUtil;
+    private JWTTokenUtil jwtTokenUtil;
 
 //    public String createAuthenticationToken(String username, String password) throws Exception {
 //        authenticate(username, password);
@@ -35,7 +35,7 @@ public class UserService {
 //        String token = jwtTokenUtil.generateToken(userDetails);
 //        return token;
 //    }
-//
+////
 //    private void authenticate(String username, String password) throws Exception {
 //        try {
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -45,7 +45,7 @@ public class UserService {
 //            throw new Exception("INVALID_CREDENTIALS", e);
 //        }
 //    }
-//
+////
 //    @Override
 //    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 //        CustomUser customUser = userRepository.findByUsername(username)
@@ -68,5 +68,9 @@ public class UserService {
 
     public Optional<CustomUser> findUserByID(Long userID) throws EntityNotFoundException {
         return userRepository.findById(userID);
+    }
+
+    public Optional<CustomUser> findUserByUserName(String username) throws EntityNotFoundException {
+        return userRepository.findByUsername(username);
     }
 }

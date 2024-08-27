@@ -16,6 +16,9 @@ public class UserRequestDTO {
     private String username;
     private String password;
     private String name;
+    /**
+     * userTypes are PASSENGER,EXEC_PASSENGER OR DRIVER
+     */
     private String userType;
 
     public CustomUser toCustomUser() {
