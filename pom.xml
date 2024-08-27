@@ -76,6 +76,11 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <artifactId>flyway-core</artifactId>
+            <groupId>org.flywaydb</groupId>
+            <version>10.17.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>

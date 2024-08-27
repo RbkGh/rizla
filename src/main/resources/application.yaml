@@ -5,12 +5,23 @@ spring:
     url: jdbc:postgresql://db:9999/rizladb
     username: rizla_user
     password: rizla_pass
+  flyway:
+    enabled: false
+    installed-by: Rodney
+    default-schema: rizladb
+    schemas: rizladb
+    locations: classpath:/db/migration
+    url: jdbc:postgresql://localhost:9999/rizladb
+    user: rizla_user
+    password: rizla_pass
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
 jwt:
   secret: testSecretMUSTGO89*23~testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89
   expiration: 3600

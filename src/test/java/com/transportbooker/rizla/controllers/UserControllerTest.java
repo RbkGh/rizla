@@ -34,7 +34,7 @@ class UserControllerTest {
     private static final String INIT_SQL = "data/init_data.sql";
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:13.1-alpine"
+            "postgres:10.0"
     ).withDatabaseName("rizladb")
             .withUsername("rizla_user")
             .withPassword("rizla_pass")

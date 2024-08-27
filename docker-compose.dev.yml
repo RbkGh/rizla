@@ -18,7 +18,7 @@ services:
       - ~/.m2:/root/.m2
 
   db:
-    image: postgres:13
+    image: postgres:10.0
     ports:
       - "9999:5432"
     environment:

@@ -61,9 +61,9 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/api/public/auth/login").permitAll() // Public login endpoint
-                        .requestMatchers("/api/public/*").permitAll()  // Public API endpoints
+                        .requestMatchers("/api/public/**").permitAll()  // Public API endpoints
                         .requestMatchers("/api/secure/**").authenticated() // Secured API endpoints
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
