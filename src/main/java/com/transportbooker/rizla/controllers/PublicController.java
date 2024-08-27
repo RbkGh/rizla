@@ -36,7 +36,7 @@ public class PublicController {
 
         String jwtToken = authService.createAuthenticationToken(username, password);
 
-        return ResponseEntity.ok(LoginResponseDTO.builder().jwtToken(jwtToken));
+        return ResponseEntity.ok(LoginResponseDTO.builder().jwtToken(jwtToken).build());
     }
 
     @PostMapping("/users/register")

@@ -1,6 +1,7 @@
 package com.transportbooker.rizla.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.transportbooker.rizla.dto.request.LoginRequestDTO;
 import com.transportbooker.rizla.dto.request.UserRequestDTO;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,6 +66,29 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(userRequestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+
+    }
+
+    @Test
+    public void loginUser_Expect_200_StatusCode() throws Exception {
+        UserRequestDTO userRequestDTO = createPassengerUser("PASSENGER");
+
+
+
+        //UserRequestDTO userRequestDTO = createPassengerUser("PASSENGER");
+
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(userRequestDTO))).andReturn();
+
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setUsername(userRequestDTO.getUsername());
+        loginRequestDTO.setPassword(userRequestDTO.getPassword());
+
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(loginRequestDTO)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
     }
 
