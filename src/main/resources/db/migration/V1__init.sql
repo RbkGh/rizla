@@ -53,3 +53,13 @@ CREATE TABLE IF NOT EXISTS vehicle_bookings
                                         ON UPDATE NO ACTION
                                         ON DELETE NO ACTION
     );
+
+
+INSERT INTO vehicles(
+    vehicle_license_number, vehicle_manufacturer, vehicle_model)
+VALUES ('GT453', 'Toyota', 'Camry'),
+       ('GT454', 'Mercedes Benz', 'C45'),
+       ('GT455', 'Tesla', 'Model S Plaid'),
+       ('GT456', 'Honda', 'Civic'),
+       ('GT457', 'Hyundai', 'Elantra'),
+       ('GT458', 'Nissan', 'Almera');

@@ -8,4 +8,13 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class VehicleBookingResponseDTO {
+
+    private Long id;
+
+    private String vehicleManufacturer;
+
+    private String vehicleModel;
+
+    private String vehicleLicenseNumber;
+
 }

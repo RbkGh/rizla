@@ -1,6 +1,5 @@
 package com.transportbooker.rizla.filter;
 
-import com.transportbooker.rizla.services.UserService;
 import com.transportbooker.rizla.util.JWTTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -36,10 +35,6 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
         final String requestTokenHeader = request.getHeader("Authorization");
 
-//        if (isEmpty(requestTokenHeader) || !header.startsWith("Bearer ")) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
 
         String username = null;
         String jwtToken = null;
@@ -55,8 +50,6 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             }
         } else {
             logger.info("JWT Token does not begin with Bearer String");
-            chain.doFilter(request, response);
-            return;
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

@@ -34,6 +34,4 @@ public class VehicleBookingController {
         return ResponseEntity.ok(VehicleBookingResponseDTO.builder().build());
     }
 
-
-
 }

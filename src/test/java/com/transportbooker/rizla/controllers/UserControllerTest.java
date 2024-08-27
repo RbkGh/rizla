@@ -3,8 +3,10 @@ package com.transportbooker.rizla.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.transportbooker.rizla.dto.request.LoginRequestDTO;
 import com.transportbooker.rizla.dto.request.UserRequestDTO;
+import com.transportbooker.rizla.util.BaseSetupTest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,44 +25,42 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+class UserControllerTest extends BaseSetupTest {
 
-    private static final String INIT_SQL = "data/init_data.sql";
-
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
-            "postgres:10.0"
-    ).withDatabaseName("rizladb")
-            .withUsername("rizla_user")
-            .withPassword("rizla_pass")
-            .withInitScript(INIT_SQL)
-            .withReuse(true);
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-    @BeforeAll
-    public static void beforeAll() {
-        postgres.start();
-    }
-    @AfterAll
-    public static void afterAll() {
-        postgres.stop();
-    }
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    private static final String INIT_SQL = "data/init_data.sql";
+//
+//    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+//            "postgres:10.0"
+//    ).withDatabaseName("rizladb")
+//            .withUsername("rizla_user")
+//            .withPassword("rizla_pass")
+//            .withInitScript(INIT_SQL)
+//            .withReuse(true);
+//
+//    @DynamicPropertySource
+//    static void configureProperties(DynamicPropertyRegistry registry) {
+//        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+//        registry.add("spring.datasource.username", postgres::getUsername);
+//        registry.add("spring.datasource.password", postgres::getPassword);
+//    }
+//
+//    @BeforeAll
+//    public static void beforeAll() {
+//        postgres.start();
+//    }
+//    @AfterAll
+//    public static void afterAll() {
+//        postgres.stop();
+//    }
 
     @Test
+    @Order(1)
     public void registerUser_Expect_201_Created() throws Exception {
-        UserRequestDTO userRequestDTO = createPassengerUser("PASSENGER");
+        UserRequestDTO userRequestDTO = createPassengerUser("rbk@gmail.com","Rodney1","PASSENGER");
 
         this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -70,8 +70,9 @@ class UserControllerTest {
     }
 
     @Test
+    @Order(2)
     public void loginUser_Expect_200_StatusCode() throws Exception {
-        UserRequestDTO userRequestDTO = createPassengerUser("PASSENGER");
+        UserRequestDTO userRequestDTO = createPassengerUser("yh@yh.com","Yeah","PASSENGER");
 
 
 
@@ -92,20 +93,5 @@ class UserControllerTest {
 
     }
 
-    private UserRequestDTO createPassengerUser(String userType) {
-        return UserRequestDTO.builder()
-                .username("rizla_user@gmail.com")
-                .password("rizla_pass")
-                .name("Rodney")
-                .userType(userType)
-                .build();
-    }
 
-    private static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
