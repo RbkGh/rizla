@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -38,6 +39,17 @@ public class VehicleBookingService {
     }
 
     @Transactional
+    public Optional<VehicleBooking> overrideVehicleBooking(CustomUser passenger, VehicleBooking vehicleBooking) throws NotFoundHttpException {
+        vehicleBooking.setPassenger(passenger); //replacing the passenger now
+
+        return Optional.of(vehicleBookingRepository.save(vehicleBooking));
+    }
+
+    public Optional<VehicleBooking> findVehicleBookingByVehicleBookingID(Long vehicleBookingID) {
+        return vehicleBookingRepository.findById(vehicleBookingID);
+    }
+
+    @Transactional
     public Optional<VehicleBooking> confirmVehicleBooking(CustomUser driver, VehicleBooking vehicleBooking) throws NotFoundHttpException {
         vehicleBooking.setConfirmed(true);
         vehicleBooking.setDriver(driver);
@@ -64,6 +76,21 @@ public class VehicleBookingService {
     public boolean doesVehicleBookingExist(Vehicle vehicle, LocalDateTime bookingStartTime) throws NotFoundHttpException {
         Optional<VehicleBooking> vehicleBooking = vehicleBookingRepository.findByVehicle_IdAndBookingStartTime(vehicle.getId(), bookingStartTime);
         return vehicleBooking.isPresent();
+    }
+
+    public boolean canExecutiveOverrideVehicleBooking(VehicleBooking vehicleBookingInDB, LocalDateTime bookingStartTime) throws NotFoundHttpException {
+        Optional<VehicleBooking> vehicleBooking = vehicleBookingRepository.findByVehicle_IdAndBookingStartTime(vehicleBookingInDB.getVehicle().getId(), bookingStartTime);
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime bookingStartTimeInDB = vehicleBooking.get().getBookingStartTime();
+
+        Duration duration = Duration.between(currentTime, bookingStartTimeInDB);
+        long durationInMinutes = duration.toMinutes();
+
+        //is date before booking time in db? is it also more than 30 minutes to time before it is confirmed
+        if(currentTime.isBefore(bookingStartTimeInDB) && durationInMinutes > 30 && !vehicleBooking.get().isConfirmed()) {
+            return true;
+        }
+        return false;
     }
 
     public VehicleBookingStartAndEndTimeHolder getTImeUnitTimeFromRequest(TimeSlot timeSlot) {

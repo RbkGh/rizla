@@ -1,10 +1,7 @@
 package com.transportbooker.rizla.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class VehicleBooking {
 
     @Id
@@ -30,14 +28,17 @@ public class VehicleBooking {
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
+    @ToString.Exclude
     private Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "passenger_id")
+    @ToString.Exclude
     private CustomUser passenger;
 
     @ManyToOne
     @JoinColumn(name = "driver_id")
+    @ToString.Exclude
     private CustomUser driver;
 
     private boolean confirmed;

@@ -24,12 +24,12 @@ public class VehicleBookingResponseDTO {
 
     private String vehicleLicenseNumber;
 
-    private LocalDateTime bookingRequestTime;
+    private String bookingRequestTime;
 
-    private LocalDateTime bookingConfirmedTime;
+    private String bookingConfirmedTime;
 
-    private LocalDateTime bookingStartTime;
+    private String bookingStartTime;
 
-    private LocalDateTime bookingEndTime;
+    private String bookingEndTime;
 
 }

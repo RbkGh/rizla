@@ -8,13 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 
 class UserControllerTest extends BaseSetupTest {
 
     @Test
     public void registerUser_Expect_201_Created() throws Exception {
-        UserRequestDTO userRequestDTO = createPassengerUser("rbk@gmail.com", "Rodney1", "PASSENGER");
+        UserRequestDTO userRequestDTO = createPassengerUser(RandomStringUtils.randomAlphabetic(3,6)+"rbk@gmail.com", "Rodney1", "PASSENGER");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -25,7 +26,7 @@ class UserControllerTest extends BaseSetupTest {
 
     @Test
     public void loginUser_Expect_200_StatusCode() throws Exception {
-        UserRequestDTO userRequestDTO = createPassengerUser("yh@yh.com", "Yeah", "PASSENGER");
+        UserRequestDTO userRequestDTO = createPassengerUser(RandomStringUtils.randomAlphabetic(3,6)+"yh@yh.com", "Yeah", "PASSENGER");
 
 
         //UserRequestDTO userRequestDTO = createPassengerUser("PASSENGER");

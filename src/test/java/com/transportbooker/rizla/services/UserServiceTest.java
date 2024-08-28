@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,6 +74,5 @@ public class UserServiceTest{
         assertEquals("encodedPassword", savedUser.getPassword());
         Mockito.verify(userRepository).save(user);
     }
-
 
 }

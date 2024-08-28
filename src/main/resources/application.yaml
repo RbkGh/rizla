@@ -4,6 +4,8 @@ spring:
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
+      write-dates-as-timestamps: false
+
   datasource:
     url: jdbc:postgresql://db:9999/rizladb
     username: rizla_user

@@ -45,18 +45,43 @@ public class VehicleBookingController {
                 vehicleBookingService.getTImeUnitTimeFromRequest(vehicleBookingRequestDTO.getTimeSlot());
 
         if (vehicleBookingService.doesVehicleBookingExist(vehicle.get(), vehicleBookingStartAndEndTimeHolder.getBookingStartTime()))
-            return ResponseEntity.status(HttpStatusCode.valueOf(409)).body("Vehicle Exists");
+            return ResponseEntity.status(HttpStatusCode.valueOf(409)).body("Vehicle Booking For Exact Slot Exists");
 
 
         VehicleBooking vehicleBooking = vehicleBookingService.createVehicleBooking(customUser.get(), vehicle.get(), vehicleBookingRequestDTO);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(VehicleBookingResponseDTO.builder()
                 .id(vehicleBooking.getId())
-                .bookingRequestTime(vehicleBooking.getBookingRequestTime())
+                .bookingRequestTime(vehicleBooking.getBookingRequestTime().toString())
                 .passengerID(vehicleBooking.getPassenger().getId())
                 .vehicleID(vehicleBooking.getVehicle().getId())
                 .vehicleLicenseNumber(vehicleBooking.getVehicle().getVehicleLicenseNumber())
                 .build());
+    }
+
+    @PutMapping("/executive/{vehicleBookingID}")
+    @PreAuthorize("hasRole('ROLE_EXECPASSENGER')")
+    public ResponseEntity<?> createBookingExecutivePassenger(@PathVariable Long vehicleBookingID, @RequestBody VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+        Optional<CustomUser> customUser = userService.findUserByUserName(username);
+
+        Optional<VehicleBooking> vehicleBookingInDB = vehicleBookingService.findVehicleBookingByVehicleBookingID(vehicleBookingID);
+
+        if (vehicleBookingInDB.isEmpty())
+            throw new NotFoundHttpException();
+
+        VehicleBookingStartAndEndTimeHolder vehicleBookingStartAndEndTimeHolder =
+                vehicleBookingService.getTImeUnitTimeFromRequest(vehicleBookingRequestDTO.getTimeSlot());
+
+        if (!vehicleBookingService.canExecutiveOverrideVehicleBooking(vehicleBookingInDB.get(), vehicleBookingStartAndEndTimeHolder.getBookingStartTime()))
+            return ResponseEntity.status(HttpStatusCode.valueOf(409)).body("Vehicle cannot be booked since time to book is more than 30 minutes");
+
+
+        Optional<VehicleBooking> vehicleBookingOverriden = vehicleBookingService.overrideVehicleBooking(customUser.get(), vehicleBookingInDB.get());
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{vehicleBookingID}/confirm")

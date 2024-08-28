@@ -73,7 +73,7 @@ public abstract class BaseSetupTest {
             loginRequestDTO.setUsername(username);
             loginRequestDTO.setPassword(password);
         } else {
-            UserRequestDTO userRequestDTO = createPassengerUser("s2"+ RandomStringUtils.random(3)+"@yh.com","wrt","PASSENGER");
+            UserRequestDTO userRequestDTO = createPassengerUser("s2"+RandomStringUtils.randomAlphabetic(3,6)+"@yh.com","wrt","PASSENGER");
 
 
             this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
