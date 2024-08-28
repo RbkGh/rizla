@@ -54,9 +54,6 @@ public class VehicleBookingControllerTest extends BaseSetupTest {
         Vehicle vehicleSaved = vehicleRepository.save(vehicle);
 
 
-
-
-
         String carId = vehicleSaved.getId().toString();
 
         this.mockMvc.perform(MockMvcRequestBuilders.post( "/api/bookings/"+carId+"/car/"+userId+"/user")
@@ -122,6 +119,55 @@ public class VehicleBookingControllerTest extends BaseSetupTest {
                         .header("Authorization", "Bearer " + JWT))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
+
+    }
+
+
+    @Test
+    @Transactional
+    void cancelBookingExpect_Success() throws Exception {
+
+        UserRequestDTO userRequestDTO = UserRequestDTO.builder()
+                .userType("PASSENGER") // PASSENGER
+                .username(RandomStringUtils.random(4)+"randomboy@test.com")
+                .password("pass1234")
+                .name("Rodey")
+                .build();
+
+        UserResponseDTO userResponseDTO = createUserSavedInDB(userRequestDTO);
+        Long userId = userResponseDTO.getId();
+
+        String JWT = getJWT(userRequestDTO.getUsername(), userRequestDTO.getPassword());
+
+        Vehicle vehicle = Vehicle.builder()
+                .vehicleManufacturer("Tesla")
+                .vehicleModel("Model S")
+                .vehicleLicenseNumber("3222p")
+                .build();
+        Vehicle vehicleSaved = vehicleRepository.save(vehicle);
+
+
+        String carId = vehicleSaved.getId().toString();
+
+        //save booking request with vehicle
+        VehicleBookingRequestDTO vehicleBookingRequestDTO = VehicleBookingRequestDTO.builder()
+                .timeSlot(TimeSlot.HOUR_5).build();
+        VehicleBookingStartAndEndTimeHolder startTimeAndEndHolder = vehicleBookingService.getTImeUnitTimeFromRequest(vehicleBookingRequestDTO.getTimeSlot());
+
+        VehicleBooking vehicleBooking = VehicleBooking.builder()
+                .bookingStartTime(startTimeAndEndHolder.getBookingStartTime())
+                .bookingEndTime(startTimeAndEndHolder.getBookingEndTime())
+                .bookingRequestTime(LocalDateTime.now())
+                .vehicle(vehicleSaved)
+                .build();
+
+        VehicleBooking vehicleBookingSaved = vehicleBookingRepository.save(vehicleBooking); //save booking request with vehicle
+        long vehicleBookingId = vehicleBookingSaved.getId();
+
+        this.mockMvc.perform(MockMvcRequestBuilders.put("/api/bookings/"+vehicleBookingId+"/cancel" )
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + JWT))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
 
     }
 }

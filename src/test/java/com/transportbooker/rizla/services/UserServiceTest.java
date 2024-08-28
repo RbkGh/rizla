@@ -2,6 +2,7 @@ package com.transportbooker.rizla.services;
 
 import com.transportbooker.rizla.models.CustomUser;
 import com.transportbooker.rizla.repository.UserRepository;
+import com.transportbooker.rizla.util.BaseSetupTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -19,7 +20,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserServiceTest{
 
     @Mock
     private UserRepository userRepository;
@@ -71,4 +72,6 @@ public class UserServiceTest {
         assertEquals("encodedPassword", savedUser.getPassword());
         Mockito.verify(userRepository).save(user);
     }
+
+
 }

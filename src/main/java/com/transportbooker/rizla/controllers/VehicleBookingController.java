@@ -79,4 +79,19 @@ public class VehicleBookingController {
         return ResponseEntity.noContent().build();
     }
 
+
+    @PutMapping("/{vehicleBookingID}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long vehicleBookingID) throws NotFoundHttpException {
+
+        if (!vehicleBookingService.doesVehicleBookingExist(vehicleBookingID))
+            return ResponseEntity.status(HttpStatusCode.valueOf(404)).body("Vehicle Booking doesn't exist");
+
+
+        vehicleBookingService.cancelVehicleBooking(
+                vehicleBookingService.getVehicleBookingById(vehicleBookingID).get());
+
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

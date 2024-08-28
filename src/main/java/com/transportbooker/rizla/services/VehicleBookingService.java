@@ -46,6 +46,12 @@ public class VehicleBookingService {
         return Optional.of(vehicleBookingRepository.save(vehicleBooking));
     }
 
+    @Transactional
+    public void cancelVehicleBooking(VehicleBooking vehicleBooking) throws NotFoundHttpException {
+
+        vehicleBookingRepository.delete(vehicleBooking);
+    }
+
     public Optional<VehicleBooking> getVehicleBookingById(Long vehicleBookingId) {
         return vehicleBookingRepository.findById(vehicleBookingId);
     }

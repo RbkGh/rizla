@@ -5,8 +5,11 @@ import com.transportbooker.rizla.dto.request.LoginRequestDTO;
 import com.transportbooker.rizla.dto.request.UserRequestDTO;
 import com.transportbooker.rizla.dto.response.LoginResponseDTO;
 import com.transportbooker.rizla.dto.response.UserResponseDTO;
+import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,19 +26,19 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class BaseSetupTest {
+public abstract class BaseSetupTest {
     @Autowired
     public MockMvc mockMvc;
 
     private static final String INIT_SQL = "data/init_data.sql";
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:10.0"
     ).withDatabaseName("rizladb")
             .withUsername("rizla_user")
             .withPassword("rizla_pass")
             .withInitScript(INIT_SQL)
-            .withReuse(false);
+            .withReuse(true);
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
@@ -45,12 +48,12 @@ public class BaseSetupTest {
     }
 
     @BeforeAll
-    public static void beforeAll() {
+    public  static void beforeAll() {
         postgres.start();
     }
     @AfterAll
-    public static void afterAll() {
-        postgres.stop();
+    public  static void afterAll() {
+        //postgres.stop();
     }
 
 
