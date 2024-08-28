@@ -22,8 +22,8 @@ public class VehicleBookingController {
     private final UserService userService;
     private final VehicleBookingService vehicleBookingService;
 
-    @PostMapping("/{passengerID}")
-    public ResponseEntity<?> createBooking(@PathVariable Long passengerID, @RequestBody VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
+    @PostMapping("/{carID}/car/{passengerID}/user")
+    public ResponseEntity<?> createBooking(@PathVariable Long carID,@PathVariable Long passengerID, @RequestBody VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
         Optional<CustomUser> customUser = userService.findUserByID(passengerID);
 
         if(customUser.isEmpty())

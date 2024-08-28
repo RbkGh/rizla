@@ -24,11 +24,6 @@ public class VehicleControllerTest extends BaseSetupTest {
 
     public String JWT;
 
-//    @BeforeAll
-//    public void setup() throws Exception {
-//        JWT = getJWT(null,null);
-//    }
-
     @Test
     public void getCars_ExpectSuccess() throws Exception {
         JWT = getJWT(null,null);
@@ -39,39 +34,4 @@ public class VehicleControllerTest extends BaseSetupTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    /**
-     * Make a post request to get jwt from header
-     *
-     * @param username
-     * @param password
-     * @return
-     * @throws Exception
-     */
-    public String getJWT(String username, String password) throws Exception {
-        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
-
-        if(username != null && password != null) {
-            loginRequestDTO.setUsername(username);
-            loginRequestDTO.setPassword(password);
-        } else {
-            UserRequestDTO userRequestDTO = createPassengerUser("s2@yh.com","wrt","PASSENGER");
-
-
-            this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(userRequestDTO))).andReturn();
-
-            loginRequestDTO.setUsername(userRequestDTO.getUsername());
-            loginRequestDTO.setPassword(userRequestDTO.getPassword());
-        }
-
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(loginRequestDTO))).andReturn();
-
-        String responseBodyString = mvcResult.getResponse().getContentAsString();
-        LoginResponseDTO jwtKeyObject = new ObjectMapper().readValue(responseBodyString,LoginResponseDTO.class);
-
-        return jwtKeyObject.getJwtToken();
-    }
 }
