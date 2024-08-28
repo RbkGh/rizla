@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +22,16 @@ public class VehicleService {
 
     public List<Vehicle> getAllVehicles() throws NotFoundHttpException {
         return vehicleRepository.findAll();
+    }
+
+    public boolean doesVehicleExist(Long vehicleID) throws NotFoundHttpException {
+        Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleID);
+        return vehicle.isPresent();
+    }
+
+    public Optional<Vehicle> findVehicleByID(Long vehicleID) throws NotFoundHttpException {
+        Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleID);
+        return vehicle;
     }
 
 }

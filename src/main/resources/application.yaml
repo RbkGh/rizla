@@ -1,6 +1,9 @@
 spring:
   application:
     name: rizla
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
   datasource:
     url: jdbc:postgresql://db:9999/rizladb
     username: rizla_user

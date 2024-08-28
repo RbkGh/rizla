@@ -1,7 +1,10 @@
 spring:
   application:
     name: rizla
-#  datasource:
+  jackson:
+      serialization:
+        FAIL_ON_EMPTY_BEANS: false
+  #  datasource:
 #    url: jdbc:postgresql://db:9999/rizladb
 #    username: rizla_user
 #    password: rizla_pass

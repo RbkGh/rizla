@@ -4,10 +4,15 @@ import com.transportbooker.rizla.dto.request.VehicleBookingRequestDTO;
 import com.transportbooker.rizla.dto.response.VehicleBookingResponseDTO;
 import com.transportbooker.rizla.exceptions.NotFoundHttpException;
 import com.transportbooker.rizla.models.CustomUser;
+import com.transportbooker.rizla.models.Vehicle;
+import com.transportbooker.rizla.models.VehicleBooking;
+import com.transportbooker.rizla.models.VehicleBookingStartAndEndTimeHolder;
 import com.transportbooker.rizla.services.UserService;
 import com.transportbooker.rizla.services.VehicleBookingService;
+import com.transportbooker.rizla.services.VehicleService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,17 +26,33 @@ public class VehicleBookingController {
 
     private final UserService userService;
     private final VehicleBookingService vehicleBookingService;
+    private final VehicleService vehicleService;
 
-    @PostMapping("/{carID}/car/{passengerID}/user")
-    public ResponseEntity<?> createBooking(@PathVariable Long carID,@PathVariable Long passengerID, @RequestBody VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
+    @PostMapping("/{vehicleID}/car/{passengerID}/user")
+    public ResponseEntity<?> createBooking(@PathVariable Long vehicleID, @PathVariable Long passengerID, @RequestBody VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
         Optional<CustomUser> customUser = userService.findUserByID(passengerID);
+        Optional<Vehicle> vehicle = vehicleService.findVehicleByID(vehicleID);
 
-        if(customUser.isEmpty())
+        if (customUser.isEmpty())
+            throw new NotFoundHttpException();
+        if (vehicle.isEmpty())
             throw new NotFoundHttpException();
 
-        vehicleBookingService.createVehicleBooking(customUser.get(), vehicleBookingRequestDTO);
+        VehicleBookingStartAndEndTimeHolder vehicleBookingStartAndEndTimeHolder =
+                vehicleBookingService.getTImeUnitTimeFromRequest(vehicleBookingRequestDTO.getTimeSlot());
 
-        return ResponseEntity.ok(VehicleBookingResponseDTO.builder().build());
+        if (vehicleBookingService.doesVehicleBookingExist(vehicle.get(), vehicleBookingStartAndEndTimeHolder.getBookingStartTime()))
+            return ResponseEntity.status(HttpStatusCode.valueOf(409)).body("Vehicle Exists");
+
+
+        VehicleBooking vehicleBooking = vehicleBookingService.createVehicleBooking(customUser.get(), vehicle.get(), vehicleBookingRequestDTO);
+
+        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(VehicleBookingResponseDTO.builder()
+                .bookingRequestTime(vehicleBooking.getBookingRequestTime())
+                .passengerID(vehicleBooking.getPassenger().getId())
+                .vehicleID(vehicleBooking.getVehicle().getId())
+                .vehicleLicenseNumber(vehicleBooking.getVehicle().getVehicleLicenseNumber())
+                .build());
     }
 
 }
