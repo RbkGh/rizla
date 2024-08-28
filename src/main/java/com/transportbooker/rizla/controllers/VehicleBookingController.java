@@ -14,6 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -48,11 +51,32 @@ public class VehicleBookingController {
         VehicleBooking vehicleBooking = vehicleBookingService.createVehicleBooking(customUser.get(), vehicle.get(), vehicleBookingRequestDTO);
 
         return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(VehicleBookingResponseDTO.builder()
+                .id(vehicleBooking.getId())
                 .bookingRequestTime(vehicleBooking.getBookingRequestTime())
                 .passengerID(vehicleBooking.getPassenger().getId())
                 .vehicleID(vehicleBooking.getVehicle().getId())
                 .vehicleLicenseNumber(vehicleBooking.getVehicle().getVehicleLicenseNumber())
                 .build());
+    }
+
+    @PutMapping("/{vehicleBookingID}/confirm")
+    @PreAuthorize("hasRole('ROLE_DRIVER')")
+    public ResponseEntity<?> confirmBooking(@PathVariable Long vehicleBookingID) throws NotFoundHttpException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+        Optional<CustomUser> customUser = userService.findUserByUserName(username);
+
+        if (!vehicleBookingService.doesVehicleBookingExist(vehicleBookingID))
+            return ResponseEntity.status(HttpStatusCode.valueOf(404)).body("Vehicle Booking doesn't exist");
+
+
+        vehicleBookingService.confirmVehicleBooking(
+                customUser.get(),
+                vehicleBookingService.getVehicleBookingById(vehicleBookingID).get()).get();
+
+
+        return ResponseEntity.noContent().build();
     }
 
 }

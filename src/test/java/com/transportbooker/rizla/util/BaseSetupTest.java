@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -69,7 +70,7 @@ public class BaseSetupTest {
             loginRequestDTO.setUsername(username);
             loginRequestDTO.setPassword(password);
         } else {
-            UserRequestDTO userRequestDTO = createPassengerUser("s2@yh.com","wrt","PASSENGER");
+            UserRequestDTO userRequestDTO = createPassengerUser("s2"+ RandomStringUtils.random(3)+"@yh.com","wrt","PASSENGER");
 
 
             this.mockMvc.perform(MockMvcRequestBuilders.post("/api/public/users/register")
