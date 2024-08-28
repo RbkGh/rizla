@@ -20,7 +20,7 @@ public class VehicleBookingControllerTest extends BaseSetupTest {
     private VehicleRepository vehicleRepository;
 
     @Test
-    void createBooking() throws Exception {
+    void createBooking_TestSuccessful_AndDuplicateBooking() throws Exception {
         UserRequestDTO userRequestDTO = UserRequestDTO.builder()
                 .userType("PASSENGER")
                 .username("randomboy@test.com")
@@ -42,8 +42,6 @@ public class VehicleBookingControllerTest extends BaseSetupTest {
 
 
         String carId = vehicleSaved.getId().toString();
-//        VehicleBookingRequestDTO vehicleBookingRequestDTO = new VehicleBookingRequestDTO();
-//        vehicleBookingRequestDTO.setTimeSlot(TimeSlot.HOUR_1);
 
         this.mockMvc.perform(MockMvcRequestBuilders.post("/api/bookings/"+carId+"/car/"+userId+"/user")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -51,5 +49,13 @@ public class VehicleBookingControllerTest extends BaseSetupTest {
                                 .timeSlot(TimeSlot.HOUR_1).build()))
                         .header("Authorization", "Bearer " + JWT))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        //try again, expect 409 conflict
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/bookings/"+carId+"/car/"+userId+"/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(VehicleBookingRequestDTO.builder()
+                                .timeSlot(TimeSlot.HOUR_1).build()))
+                        .header("Authorization", "Bearer " + JWT))
+                .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 }

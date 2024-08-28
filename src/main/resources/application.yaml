@@ -29,7 +29,7 @@ spring:
     log-request-details: true
 jwt:
   secret: testSecretMUSTGO89*23~testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89testSecretMUSTGO89
-  expiration: 3600
+  expiration: 360000
 logging:
   level:
     web: debug
