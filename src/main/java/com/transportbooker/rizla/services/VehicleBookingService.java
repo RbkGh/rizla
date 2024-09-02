@@ -3,7 +3,6 @@ package com.transportbooker.rizla.services;
 import com.transportbooker.rizla.dto.request.VehicleBookingRequestDTO;
 import com.transportbooker.rizla.exceptions.NotFoundHttpException;
 import com.transportbooker.rizla.models.*;
-import com.transportbooker.rizla.repository.UserRepository;
 import com.transportbooker.rizla.repository.VehicleBookingRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import java.util.Optional;
 public class VehicleBookingService {
 
     private VehicleBookingRepository vehicleBookingRepository;
-    private final UserRepository userRepository;
 
     @Transactional
     public VehicleBooking createVehicleBooking(CustomUser customUser, Vehicle vehicle, VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
@@ -39,7 +37,7 @@ public class VehicleBookingService {
     }
 
     @Transactional
-    public Optional<VehicleBooking> overrideVehicleBooking(CustomUser passenger, VehicleBooking vehicleBooking) throws NotFoundHttpException {
+    public Optional<VehicleBooking> overrideVehicleBooking(CustomUser passenger, VehicleBooking vehicleBooking) {
         vehicleBooking.setPassenger(passenger); //replacing the passenger now
 
         return Optional.of(vehicleBookingRepository.save(vehicleBooking));
@@ -59,7 +57,7 @@ public class VehicleBookingService {
     }
 
     @Transactional
-    public void cancelVehicleBooking(VehicleBooking vehicleBooking) throws NotFoundHttpException {
+    public void cancelVehicleBooking(VehicleBooking vehicleBooking) {
 
         vehicleBookingRepository.delete(vehicleBooking);
     }
@@ -73,21 +71,20 @@ public class VehicleBookingService {
         return vehicleBooking.isPresent();
     }
 
-    public boolean doesVehicleBookingExist(Vehicle vehicle, LocalDateTime bookingStartTime) throws NotFoundHttpException {
+    public boolean doesVehicleBookingExist(Vehicle vehicle, LocalDateTime bookingStartTime) {
         Optional<VehicleBooking> vehicleBooking = vehicleBookingRepository.findByVehicle_IdAndBookingStartTime(vehicle.getId(), bookingStartTime);
         return vehicleBooking.isPresent();
     }
 
-    public boolean canExecutiveOverrideVehicleBooking(VehicleBooking vehicleBookingInDB, LocalDateTime bookingStartTime) throws NotFoundHttpException {
+    public boolean canExecutiveOverrideVehicleBooking(VehicleBooking vehicleBookingInDB, LocalDateTime timeOfRequestingOverride,LocalDateTime bookingStartTime) {
         Optional<VehicleBooking> vehicleBooking = vehicleBookingRepository.findByVehicle_IdAndBookingStartTime(vehicleBookingInDB.getVehicle().getId(), bookingStartTime);
-        LocalDateTime currentTime = LocalDateTime.now();
         LocalDateTime bookingStartTimeInDB = vehicleBooking.get().getBookingStartTime();
 
-        Duration duration = Duration.between(currentTime, bookingStartTimeInDB);
-        long durationInMinutes = duration.toMinutes();
+        Duration duration = Duration.between(timeOfRequestingOverride, bookingStartTimeInDB);
+        long durationDifferenceInMinutes = duration.toMinutes();
 
         //is date before booking time in db? is it also more than 30 minutes to time before it is confirmed
-        if(currentTime.isBefore(bookingStartTimeInDB) && durationInMinutes > 30 && !vehicleBooking.get().isConfirmed()) {
+        if (timeOfRequestingOverride.isBefore(bookingStartTimeInDB) && durationDifferenceInMinutes <= 30 && !vehicleBooking.get().isConfirmed()) {
             return true;
         }
         return false;
@@ -138,7 +135,8 @@ public class VehicleBookingService {
         }
 
 
-        return VehicleBookingStartAndEndTimeHolder.builder()
+        return VehicleBookingStartAndEndTimeHolder
+                .builder()
                 .bookingStartTime(bookingStartTime)
                 .bookingEndTime(bookingEndTime)
                 .build();
