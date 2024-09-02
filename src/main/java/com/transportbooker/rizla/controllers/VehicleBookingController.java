@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -75,7 +76,7 @@ public class VehicleBookingController {
         VehicleBookingStartAndEndTimeHolder vehicleBookingStartAndEndTimeHolder =
                 vehicleBookingService.getTImeUnitTimeFromRequest(vehicleBookingRequestDTO.getTimeSlot());
 
-        if (!vehicleBookingService.canExecutiveOverrideVehicleBooking(vehicleBookingInDB.get(), vehicleBookingStartAndEndTimeHolder.getBookingStartTime()))
+        if (!vehicleBookingService.canExecutiveOverrideVehicleBooking(vehicleBookingInDB.get(), LocalDateTime.now(),vehicleBookingStartAndEndTimeHolder.getBookingStartTime()))
             return ResponseEntity.status(HttpStatusCode.valueOf(409)).body("Vehicle cannot be booked since time to book is more than 30 minutes");
 
 

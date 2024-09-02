@@ -28,7 +28,7 @@ docker-compose up --build
 ./mvnw test
 ```
 >>> this runs all integration and unit tests in project directory, 100% class coverage!
-
+![](https://github.com/RbkGh/rizla/blob/main/photos/img_test_cov.png)
 >> To delete db data :
 ```jshelllanguage
 docker-compose down -v
@@ -40,6 +40,7 @@ docker-compose down -v
 docker-compose -f docker-compose.dev.yml up --build
 ```
 > dev url for app will be live at http://localhost:4444/ and postgres db at port 9999
+> Swagger URL : [![http://localhost:4444/swagger-ui/index.html](https://img.shields.io/badge/swagger_url-000?style=for-the-badge&logo=ko-fi&logoColor=white)](http://localhost:8080/swagger-ui/index.html)
 
 # Create Account
 ### Request
