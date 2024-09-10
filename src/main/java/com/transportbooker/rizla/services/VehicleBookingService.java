@@ -22,7 +22,8 @@ public class VehicleBookingService {
     public VehicleBooking createVehicleBooking(CustomUser customUser, Vehicle vehicle, VehicleBookingRequestDTO vehicleBookingRequestDTO) throws NotFoundHttpException {
         VehicleBookingStartAndEndTimeHolder startAndEndTimeHolder = getTImeUnitTimeFromRequest(vehicleBookingRequestDTO.getTimeSlot());
 
-        VehicleBooking vehicleBooking = VehicleBooking.builder()
+        VehicleBooking vehicleBooking = VehicleBooking
+                .builder()
                 .vehicle(vehicle)
                 .bookingRequestTime(LocalDateTime.now())
                 .bookingStartTime(startAndEndTimeHolder.getBookingStartTime())
@@ -76,64 +77,32 @@ public class VehicleBookingService {
         return vehicleBooking.isPresent();
     }
 
-    public boolean canExecutiveOverrideVehicleBooking(VehicleBooking vehicleBookingInDB, LocalDateTime timeOfRequestingOverride,LocalDateTime bookingStartTime) {
+    public boolean canExecutiveOverrideVehicleBooking(VehicleBooking vehicleBookingInDB, LocalDateTime timeOfRequestingOverride, LocalDateTime bookingStartTime) {
         Optional<VehicleBooking> vehicleBooking = vehicleBookingRepository.findByVehicle_IdAndBookingStartTime(vehicleBookingInDB.getVehicle().getId(), bookingStartTime);
-        LocalDateTime bookingStartTimeInDB = vehicleBooking.get().getBookingStartTime();
 
-        Duration duration = Duration.between(timeOfRequestingOverride, bookingStartTimeInDB);
-        long durationDifferenceInMinutes = duration.toMinutes();
-
-        //is date before booking time in db? is it also more than 30 minutes to time before it is confirmed
-        if (timeOfRequestingOverride.isBefore(bookingStartTimeInDB) && durationDifferenceInMinutes <= 30 && !vehicleBooking.get().isConfirmed()) {
-            return true;
-        }
-        return false;
+        return vehicleBooking.map(booking -> {
+            Duration duration = Duration.between(timeOfRequestingOverride, booking.getBookingStartTime());
+            return timeOfRequestingOverride.isBefore(booking.getBookingStartTime())
+                    && duration.toMinutes() <= 30
+                    && !booking.isConfirmed();
+        }).orElse(false);
     }
 
     public VehicleBookingStartAndEndTimeHolder getTImeUnitTimeFromRequest(TimeSlot timeSlot) {
+        int startHour = switch (timeSlot) {
+            case HOUR_1 -> 6;
+            case HOUR_2 -> 7;
+            case HOUR_3 -> 8;
+            case HOUR_4 -> 9;
+            case HOUR_5 -> 10;
+            case HOUR_6 -> 11;
+            case HOUR_7 -> 12;
+            case HOUR_8 -> 13;
+            default -> 6;
+        };
 
-        LocalDateTime bookingStartTime;
-        LocalDateTime bookingEndTime;
-
-        switch (timeSlot) {
-            case HOUR_1: //set 7:00AM TO 7:59AM
-                bookingStartTime = getCustomTime(6, 0, 0);
-                bookingEndTime = getCustomTime(6, 59, 59);
-                break;
-            case HOUR_2: //set 8:00:00AM TO 8:59:59AM
-                bookingStartTime = getCustomTime(7, 0, 0);
-                bookingEndTime = getCustomTime(7, 59, 59);
-                break;
-            case HOUR_3: //set 9:00:00AM TO 9:59:59AM
-                bookingStartTime = getCustomTime(9, 0, 0);
-                bookingEndTime = getCustomTime(9, 59, 59);
-                break;
-            case HOUR_4: //set 10:00:00AM TO 10:59:59AM
-                bookingStartTime = getCustomTime(10, 0, 0);
-                bookingEndTime = getCustomTime(10, 59, 59);
-                break;
-            case HOUR_5: //set 11:00:00AM TO 11:59:59AM
-                bookingStartTime = getCustomTime(11, 0, 0);
-                bookingEndTime = getCustomTime(11, 59, 59);
-                break;
-            case HOUR_6: //set 12:00:00PM TO 12:59:59PM
-                bookingStartTime = getCustomTime(12, 0, 0);
-                bookingEndTime = getCustomTime(12, 59, 59);
-                break;
-            case HOUR_7: //set 1:00:00PM TO 1:59:59PM
-                bookingStartTime = getCustomTime(13, 0, 0);
-                bookingEndTime = getCustomTime(13, 59, 59);
-                break;
-            case HOUR_8: //set 2:00:00PM TO 2:59:59PM
-                bookingStartTime = getCustomTime(14, 0, 0);
-                bookingEndTime = getCustomTime(14, 59, 59);
-                break;
-            default: //default time is 7am to 7:59am
-                bookingStartTime = getCustomTime(6, 0, 0);
-                bookingEndTime = getCustomTime(6, 59, 59);
-                break;
-        }
-
+        LocalDateTime bookingStartTime = getCustomTime(startHour, 0, 0);
+        LocalDateTime bookingEndTime = getCustomTime(startHour, 59, 59);
 
         return VehicleBookingStartAndEndTimeHolder
                 .builder()
